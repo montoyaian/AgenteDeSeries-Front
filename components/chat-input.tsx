@@ -5,9 +5,10 @@ import { useChatStore, useAuthStore } from '@/lib/store'
 import { conversationsApi, ApiError } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { Send, Loader2, StopCircle } from 'lucide-react'
+import { ArrowUp, Square } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { motion } from 'framer-motion'
 
 export function ChatInput() {
   const { token } = useAuthStore()
@@ -39,8 +40,7 @@ export function ChatInput() {
 
     const userMessage = message.trim()
     setMessage('')
-    
-    // Add user message
+
     addMessage({
       id: `user-${Date.now()}`,
       role: 'user',
@@ -48,7 +48,6 @@ export function ChatInput() {
       timestamp: new Date(),
     })
 
-    // Add empty assistant message
     addMessage({
       id: `assistant-${Date.now()}`,
       role: 'assistant',
@@ -83,7 +82,6 @@ export function ChatInput() {
       } else {
         toast.error('Error al enviar el mensaje')
       }
-      // Update the last message with error
       updateLastMessage('Lo siento, hubo un error al procesar tu mensaje. Por favor, intentalo de nuevo.')
     }
   }
@@ -105,18 +103,24 @@ export function ChatInput() {
   if (!currentConversation) return null
 
   const isDisabled = currentConversation.ended || isStreaming
+  const hasContent = message.trim().length > 0
 
   return (
-    <div className="p-4">
-      <div className="max-w-3xl mx-auto">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="px-5 pb-5 pt-2"
+    >
+      <div className="max-w-2xl mx-auto">
         <form onSubmit={handleSubmit}>
           <div
             className={cn(
-              'glass rounded-2xl p-2 transition-all',
-              'focus-within:ring-2 focus-within:ring-primary/30 focus-within:border-primary/30'
+              'bg-secondary rounded-2xl border border-border transition-all duration-300',
+              'focus-within:border-accent/20 focus-within:ring-1 focus-within:ring-accent/10'
             )}
           >
-            <div className="flex items-end gap-2">
+            <div className="flex items-end gap-2 p-2">
               <Textarea
                 ref={textareaRef}
                 value={message}
@@ -125,40 +129,45 @@ export function ChatInput() {
                 placeholder={
                   currentConversation.ended
                     ? 'Esta conversacion ha finalizado'
-                    : 'Escribe tu mensaje...'
+                    : 'Escribe un mensaje...'
                 }
                 disabled={isDisabled}
-                className="flex-1 min-h-[44px] max-h-[150px] resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground"
+                className="flex-1 min-h-[44px] max-h-[150px] resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground/60 text-sm px-2"
                 rows={1}
               />
-              <div className="flex items-center gap-2 pb-1">
+              <div className="flex items-center pb-0.5">
                 {isStreaming ? (
                   <Button
                     type="button"
                     onClick={handleStop}
                     size="icon"
-                    className="h-10 w-10 rounded-xl bg-destructive hover:bg-destructive/90"
+                    className="h-8 w-8 rounded-xl bg-foreground hover:bg-foreground/90 text-background"
                   >
-                    <StopCircle className="w-5 h-5" />
+                    <Square className="w-3 h-3 fill-current" />
                   </Button>
                 ) : (
                   <Button
                     type="submit"
-                    disabled={!message.trim() || currentConversation.ended}
+                    disabled={!hasContent || currentConversation.ended}
                     size="icon"
-                    className="h-10 w-10 rounded-xl bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className={cn(
+                      'h-8 w-8 rounded-xl transition-all duration-200',
+                      hasContent
+                        ? 'bg-accent hover:bg-accent/90 text-accent-foreground'
+                        : 'bg-muted text-muted-foreground cursor-not-allowed'
+                    )}
                   >
-                    <Send className="w-5 h-5" />
+                    <ArrowUp className="w-4 h-4" />
                   </Button>
                 )}
               </div>
             </div>
           </div>
         </form>
-        <p className="text-xs text-center text-muted-foreground/70 mt-3">
-          Presiona Enter para enviar, Shift+Enter para nueva linea
+        <p className="text-[10px] text-center text-muted-foreground/60 mt-2.5 tracking-wide">
+          Enter para enviar &middot; Shift+Enter para nueva linea
         </p>
       </div>
-    </div>
+    </motion.div>
   )
 }

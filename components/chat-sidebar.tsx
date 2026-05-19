@@ -3,22 +3,20 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useChatStore, useAuthStore, type Conversation } from '@/lib/store'
 import { conversationsApi } from '@/lib/api'
-import { WindowControls } from '@/components/window-controls'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import Image from 'next/image'
-import { 
-  MessageSquare, 
-  Plus, 
-  ChevronLeft, 
+import {
+  Plus,
+  ChevronLeft,
   ChevronRight,
   LogOut,
   Tv,
-  Clock,
-  Trash2
+  Trash2,
 } from 'lucide-react'
 import { cn, getPosterUrl } from '@/lib/utils'
 import { toast } from 'sonner'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface ChatSidebarProps {
   onNewChat: () => void
@@ -26,22 +24,21 @@ interface ChatSidebarProps {
 
 export function ChatSidebar({ onNewChat }: ChatSidebarProps) {
   const { token, logout } = useAuthStore()
-  const { 
-    conversations, 
-    setConversations, 
-    currentConversation, 
+  const {
+    conversations,
+    setConversations,
+    currentConversation,
     setCurrentConversation,
     sidebarOpen,
-    setSidebarOpen 
+    setSidebarOpen,
   } = useChatStore()
   const [isLoading, setIsLoading] = useState(true)
 
   const loadConversations = useCallback(async () => {
     if (!token) return
-    
+
     try {
       const data = await conversationsApi.list(token)
-      console.log('[ChatSidebar] conversations list response:', data)
       const formattedConversations: Conversation[] = data.conversations.map((conv) => ({
         id: conv.id,
         serie: {
@@ -69,10 +66,9 @@ export function ChatSidebar({ onNewChat }: ChatSidebarProps) {
 
   const handleSelectConversation = async (conv: Conversation) => {
     if (!token) return
-    
+
     try {
       const fullConv = await conversationsApi.get(conv.id, token)
-      console.log('[ChatSidebar] conversation detail response:', fullConv)
       setCurrentConversation({
         id: fullConv.id,
         serie: {
@@ -132,12 +128,12 @@ export function ChatSidebar({ onNewChat }: ChatSidebarProps) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     const now = new Date()
-    
+
     const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate())
     const nowOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate())
     const diffTime = nowOnly.getTime() - dateOnly.getTime()
     const days = Math.floor(diffTime / (1000 * 60 * 60 * 24))
-    
+
     if (days === 0) return 'Hoy'
     if (days === 1) return 'Ayer'
     if (days < 7) return `Hace ${days} dias`
@@ -147,163 +143,179 @@ export function ChatSidebar({ onNewChat }: ChatSidebarProps) {
   return (
     <>
       {/* Sidebar */}
-      <div
-        className={cn(
-          'fixed left-0 top-0 h-full z-40 transition-all duration-300 ease-in-out',
-          sidebarOpen ? 'w-72' : 'w-0'
-        )}
-      >
-        <div className="h-full bg-sidebar border-r border-sidebar-border flex flex-col overflow-hidden">
-          {/* Header */}
-          <div className="p-4 border-b border-sidebar-border">
-            <div className="flex items-center justify-between mb-4">
-              <WindowControls />
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setSidebarOpen(false)}
-                className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-sidebar-accent rounded-lg"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </Button>
-            </div>
-            <Button
-              onClick={onNewChat}
-              className="w-full h-10 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-xl font-medium transition-all"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Nueva conversacion
-            </Button>
-          </div>
-
-          {/* Conversations list */}
-          <ScrollArea className="flex-1 px-2 py-4">
-            {isLoading ? (
-              <div className="space-y-2">
-                {[...Array(5)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="h-16 bg-sidebar-accent/50 rounded-xl animate-pulse"
-                  />
-                ))}
-              </div>
-            ) : conversations.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="w-12 h-12 rounded-2xl bg-sidebar-accent flex items-center justify-center mb-4">
-                  <MessageSquare className="w-6 h-6 text-muted-foreground" />
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  No tienes conversaciones aun
-                </p>
-                <p className="text-xs text-muted-foreground/70 mt-1">
-                  Empieza una nueva conversacion
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-1">
-                {conversations.map((conv) => (
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => handleSelectConversation(conv)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        handleSelectConversation(conv)
-                      }
-                    }}
-                    key={conv.id}
-                    className={cn(
-                      'w-full p-3 rounded-xl text-left transition-all group cursor-pointer',
-                      currentConversation?.id === conv.id
-                        ? 'bg-sidebar-accent border border-sidebar-border'
-                        : 'hover:bg-sidebar-accent/50'
-                    )}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            initial={{ x: -288, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -288, opacity: 0 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed left-0 top-0 h-full z-40 w-72"
+          >
+            <div className="h-full bg-sidebar flex flex-col overflow-hidden border-r border-sidebar-border">
+              {/* Header */}
+              <div className="p-4">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center">
+                      <span className="text-accent text-[10px] font-bold font-mono">S</span>
+                    </div>
+                    <span className="text-sm font-medium text-foreground">SeriesChat</span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setSidebarOpen(false)}
+                    className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-sidebar-accent rounded-lg"
                   >
-                    {(() => {
-                      const posterUrl = getPosterUrl(conv.serie.poster_path, 'w200')
-                      if (posterUrl) {
-                        console.log('[ChatSidebar] poster url:', conv.id, posterUrl)
-                      }
-                      return (
-                        <div className="flex items-start gap-3">
-                          <div className="relative w-9 h-9 rounded-lg bg-primary/10 overflow-hidden flex items-center justify-center flex-shrink-0">
-                            {posterUrl ? (
-                              <Image
-                                src={posterUrl}
-                                alt={`Poster de ${conv.serie.titulo}`}
-                                fill
-                                sizes="36px"
-                                className="object-cover"
-                              />
-                            ) : (
-                              <Tv className="w-4 h-4 text-primary" />
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-start justify-between gap-2">
-                              <p className="text-sm font-medium text-foreground truncate">
-                                {conv.serie.titulo}
-                              </p>
+                    <ChevronLeft className="w-3.5 h-3.5" />
+                  </Button>
+                </div>
+                <Button
+                  onClick={onNewChat}
+                  className="w-full h-9 bg-accent/10 hover:bg-accent/15 text-accent border border-accent/20 rounded-xl text-xs font-medium transition-all"
+                >
+                  <Plus className="w-3.5 h-3.5 mr-1.5" />
+                  Nueva conversacion
+                </Button>
+              </div>
+
+              {/* Divider */}
+              <div className="mx-4 h-px bg-sidebar-border" />
+
+              {/* Conversations list */}
+              <ScrollArea className="flex-1 px-2 py-3">
+                {isLoading ? (
+                  <div className="space-y-1 px-2">
+                    {[...Array(5)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="h-12 rounded-xl shimmer"
+                      />
+                    ))}
+                  </div>
+                ) : conversations.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-16 text-center px-4">
+                    <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center mb-3">
+                      <Tv className="w-4 h-4 text-muted-foreground" />
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Sin conversaciones
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-0.5">
+                    {conversations.map((conv) => (
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => handleSelectConversation(conv)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault()
+                            handleSelectConversation(conv)
+                          }
+                        }}
+                        key={conv.id}
+                        className={cn(
+                          'w-full px-3 py-3 rounded-xl text-left transition-all group cursor-pointer',
+                          currentConversation?.id === conv.id
+                            ? 'bg-sidebar-accent'
+                            : 'hover:bg-sidebar-accent/50'
+                        )}
+                      >
+                        {(() => {
+                          const posterUrl = getPosterUrl(conv.serie.poster_path, 'w200')
+                          return (
+                            <div className="flex items-center gap-3">
+                              <div className="relative w-10 h-10 rounded-xl bg-muted overflow-hidden flex items-center justify-center flex-shrink-0">
+                                {posterUrl ? (
+                                  <Image
+                                    src={posterUrl}
+                                    alt={`Poster de ${conv.serie.titulo}`}
+                                    fill
+                                    sizes="40px"
+                                    className="object-cover"
+                                  />
+                                ) : (
+                                  <Tv className="w-4 h-4 text-muted-foreground" />
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-foreground truncate">
+                                  {conv.serie.titulo}
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-0.5">
+                                  {formatDate(conv.created_at)}
+                                </p>
+                              </div>
                               <Button
                                 type="button"
                                 variant="ghost"
                                 size="icon"
                                 onClick={(event) => handleDeleteConversation(event, conv.id)}
-                                className="h-8 w-8 rounded-lg text-muted-foreground/70 hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="h-6 w-6 rounded-lg text-muted-foreground/60 hover:text-destructive hover:bg-destructive/5 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
                               >
-                                <Trash2 className="w-4 h-4" />
+                                <Trash2 className="w-3 h-3" />
                               </Button>
                             </div>
-                            <div className="flex items-center gap-1 mt-1">
-                              <Clock className="w-3 h-3 text-muted-foreground/70" />
-                              <span className="text-xs text-muted-foreground/70">
-                                {formatDate(conv.created_at)}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      )
-                    })()}
+                          )
+                        })()}
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            )}
-          </ScrollArea>
+                )}
+              </ScrollArea>
 
-          {/* Footer */}
-          <div className="p-4 border-t border-sidebar-border">
-            <Button
-              variant="ghost"
-              onClick={handleLogout}
-              className="w-full h-10 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-xl justify-start"
-            >
-              <LogOut className="w-4 h-4 mr-2" />
-              Cerrar sesion
-            </Button>
-          </div>
-        </div>
-      </div>
+              {/* Footer */}
+              <div className="p-3 border-t border-sidebar-border">
+                <Button
+                  variant="ghost"
+                  onClick={handleLogout}
+                  className="w-full h-8 text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/5 rounded-xl justify-start"
+                >
+                  <LogOut className="w-3 h-3 mr-2" />
+                  Cerrar sesion
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Toggle button when sidebar is closed */}
-      {!sidebarOpen && (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setSidebarOpen(true)}
-          className="fixed left-4 top-4 z-50 h-10 w-10 glass rounded-xl text-muted-foreground hover:text-foreground"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </Button>
-      )}
+      <AnimatePresence>
+        {!sidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: -8 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -8 }}
+            transition={{ duration: 0.2 }}
+          >
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setSidebarOpen(true)}
+              className="fixed left-4 top-3.5 z-50 h-8 w-8 bg-secondary border border-border rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted"
+            >
+              <ChevronRight className="w-3.5 h-3.5" />
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Overlay for mobile */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-background/80 backdrop-blur-sm z-30 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </>
   )
 }

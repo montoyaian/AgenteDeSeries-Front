@@ -6,10 +6,10 @@ import { useAuthStore, useChatStore } from '@/lib/store'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { WindowControls } from '@/components/window-controls'
-import { Search, Tv, X, Loader2, ArrowRight, Star } from 'lucide-react'
+import { Search, Tv, X, Loader2, ArrowRight } from 'lucide-react'
 import { toast } from 'sonner'
 import Image from 'next/image'
+import { motion } from 'framer-motion'
 
 interface SeriesResult {
   id: number
@@ -77,54 +77,58 @@ export function SeriesSearch({ onSeriesSelected, onClose }: SeriesSearchProps) {
   }
 
   const getYear = (dateString: string) => {
-    if (!dateString) return 'N/A'
+    if (!dateString) return ''
     return new Date(dateString).getFullYear()
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="relative w-full max-w-2xl glass rounded-3xl shadow-2xl overflow-hidden">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md"
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96, y: 8 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.96, y: 8 }}
+        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        className="relative w-full max-w-lg bg-card border border-border rounded-2xl shadow-2xl overflow-hidden"
+      >
         {/* Header */}
-        <div className="p-6 border-b border-glass-border">
-          <div className="flex items-center justify-between mb-6">
-            <WindowControls />
+        <div className="p-5 pb-4">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-base font-semibold text-foreground tracking-tight">
+              Selecciona una serie
+            </h2>
             <Button
               variant="ghost"
               size="icon"
               onClick={onClose}
-              className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/5"
+              className="h-7 w-7 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted"
             >
-              <X className="w-4 h-4" />
+              <X className="w-3.5 h-3.5" />
             </Button>
-          </div>
-
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-semibold text-foreground mb-2">
-              Selecciona una serie
-            </h2>
-            <p className="text-muted-foreground">
-              Busca la serie sobre la que quieres conversar
-            </p>
           </div>
 
           {/* Search form */}
           <form onSubmit={handleSearch} className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               type="text"
               placeholder="Buscar series..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="h-12 pl-12 pr-24 bg-input border-glass-border rounded-xl focus:ring-2 focus:ring-primary/50"
+              className="h-10 pl-10 pr-20 bg-secondary border-border rounded-xl focus:ring-1 focus:ring-accent/30 focus:border-accent/30 text-sm text-foreground placeholder:text-muted-foreground/60"
               autoFocus
             />
             <Button
               type="submit"
               disabled={isSearching || !query.trim()}
-              className="absolute right-2 top-1/2 -translate-y-1/2 h-8 px-4 bg-primary hover:bg-primary/90 rounded-lg text-sm"
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 h-7 px-3 bg-accent hover:bg-accent/90 text-accent-foreground rounded-lg text-xs font-medium"
             >
               {isSearching ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-3 h-3 animate-spin" />
               ) : (
                 'Buscar'
               )}
@@ -132,30 +136,35 @@ export function SeriesSearch({ onSeriesSelected, onClose }: SeriesSearchProps) {
           </form>
         </div>
 
+        {/* Divider */}
+        <div className="mx-5 h-px bg-border" />
+
         {/* Results */}
-        <ScrollArea className="h-[400px]">
-          <div className="p-4">
+        <ScrollArea className="h-[360px]">
+          <div className="p-3">
             {results.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16">
-                <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
-                  <Tv className="w-8 h-8 text-muted-foreground" />
+              <div className="flex flex-col items-center justify-center py-20">
+                <div className="w-12 h-12 rounded-2xl bg-muted flex items-center justify-center mb-3 animate-float">
+                  <Tv className="w-5 h-5 text-muted-foreground" />
                 </div>
-                <p className="text-muted-foreground text-center">
-                  Busca tu serie favorita para empezar a chatear
+                <p className="text-xs text-muted-foreground">
+                  Busca tu serie favorita para chatear
                 </p>
               </div>
             ) : (
-              <div className="grid gap-3">
+              <div className="space-y-1">
                 {results.map((series) => (
-                  <div key={series.id}>
-                  <button
+                  <motion.button
+                    key={series.id}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
                     onClick={() => handleSelectSeries(series)}
                     disabled={isCreating !== null}
-                    className="w-full p-4 rounded-2xl bg-white/3 hover:bg-white/6 border border-glass-border transition-all text-left group disabled:opacity-50"
+                    className="w-full p-3 rounded-xl hover:bg-muted/50 transition-all text-left group disabled:opacity-50"
                   >
-                    <div className="flex gap-4">
+                    <div className="flex gap-3">
                       {/* Poster */}
-                      <div className="relative w-16 h-24 rounded-xl overflow-hidden bg-white/5 flex-shrink-0">
+                      <div className="relative w-16 h-24 rounded-xl overflow-hidden bg-muted flex-shrink-0">
                         {series.poster_path ? (
                           <Image
                             src={`https://image.tmdb.org/t/p/w200${series.poster_path}`}
@@ -165,45 +174,45 @@ export function SeriesSearch({ onSeriesSelected, onClose }: SeriesSearchProps) {
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
-                            <Tv className="w-6 h-6 text-muted-foreground" />
+                            <Tv className="w-4 h-4 text-muted-foreground" />
                           </div>
                         )}
                       </div>
 
                       {/* Info */}
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2">
-                          <h3 className="font-medium text-foreground truncate">
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-sm font-medium text-foreground truncate">
                             {series.name}
                           </h3>
-                          <div className="flex items-center gap-1 text-muted-foreground flex-shrink-0">
-                            <Star className="w-3 h-3 fill-current text-amber-500" />
-                            <span className="text-xs">{getYear(series.first_air_date)}</span>
-                          </div>
+                          {getYear(series.first_air_date) && (
+                            <span className="text-[10px] text-muted-foreground flex-shrink-0">
+                              {getYear(series.first_air_date)}
+                            </span>
+                          )}
                         </div>
-                        <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
+                        <p className="text-xs text-muted-foreground line-clamp-2 mt-1 leading-relaxed">
                           {series.overview || 'Sin descripcion disponible'}
                         </p>
-                        <div className="flex items-center gap-2 mt-3 text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center gap-1.5 mt-2 text-accent opacity-0 group-hover:opacity-100 transition-opacity">
                           {isCreating === series.id ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <Loader2 className="w-3 h-3 animate-spin" />
                           ) : (
                             <>
-                              <span className="text-sm font-medium">Iniciar chat</span>
-                              <ArrowRight className="w-4 h-4" />
+                              <span className="text-[10px] font-medium">Iniciar chat</span>
+                              <ArrowRight className="w-3 h-3" />
                             </>
                           )}
                         </div>
                       </div>
                     </div>
-                  </button>
-                  </div>
+                  </motion.button>
                 ))}
               </div>
             )}
           </div>
         </ScrollArea>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }
