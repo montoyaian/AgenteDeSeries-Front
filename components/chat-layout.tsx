@@ -104,13 +104,13 @@ export function ChatLayout() {
                   {(() => {
                     const posterUrl = getPosterUrl(currentConversation.serie.poster_path, 'w200')
                     return (
-                      <div className="relative w-8 h-8 rounded-xl overflow-hidden bg-muted flex items-center justify-center flex-shrink-0">
+                      <div className="relative w-9 h-9 rounded-xl overflow-hidden bg-muted flex items-center justify-center flex-shrink-0">
                         {posterUrl ? (
                           <Image
                             src={posterUrl}
                             alt={`Poster de ${currentConversation.serie.titulo}`}
                             fill
-                            sizes="32px"
+                            sizes="36px"
                             className="object-cover"
                           />
                         ) : (

@@ -13,26 +13,26 @@
   --primary: #E8E8ED;
   --primary-foreground: #050505;
   --secondary: #111111;
-  --secondary-foreground: #B0B0B8;
+  --secondary-foreground: #C5C5CD;
   --muted: #1A1A1A;
-  --muted-foreground: #6B6B76;
-  --accent: #C8FF00;
-  --accent-foreground: #050505;
+  --muted-foreground: #8E8E9A;
+  --accent: #A855F7;
+  --accent-foreground: #FFFFFF;
   --destructive: #E5484D;
   --destructive-foreground: #FFFFFF;
   --border: rgba(255, 255, 255, 0.06);
   --input: rgba(255, 255, 255, 0.04);
-  --ring: #C8FF00;
+  --ring: #A855F7;
   --radius: 1rem;
 
   --sidebar: #070707;
   --sidebar-foreground: #E8E8ED;
-  --sidebar-primary: #C8FF00;
+  --sidebar-primary: #A855F7;
   --sidebar-primary-foreground: #050505;
   --sidebar-accent: rgba(255, 255, 255, 0.04);
   --sidebar-accent-foreground: #E8E8ED;
   --sidebar-border: rgba(255, 255, 255, 0.06);
-  --sidebar-ring: #C8FF00;
+  --sidebar-ring: #A855F7;
 
   --glass: rgba(255, 255, 255, 0.02);
   --glass-border: rgba(255, 255, 255, 0.06);
@@ -134,8 +134,8 @@
 
 /* Pulse glow for the AI indicator */
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(200, 255, 0, 0.15); }
-  50% { box-shadow: 0 0 16px 4px rgba(200, 255, 0, 0.08); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.2); }
+  50% { box-shadow: 0 0 20px 6px rgba(168, 85, 247, 0.1); }
 }
 
 .pulse-glow {

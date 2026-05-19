@@ -132,7 +132,7 @@ export function ChatInput() {
                     : 'Escribe un mensaje...'
                 }
                 disabled={isDisabled}
-                className="flex-1 min-h-[44px] max-h-[150px] resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground/50 text-sm px-2"
+                className="flex-1 min-h-[44px] max-h-[150px] resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground/60 text-sm px-2"
                 rows={1}
               />
               <div className="flex items-center pb-0.5">
@@ -164,7 +164,7 @@ export function ChatInput() {
             </div>
           </div>
         </form>
-        <p className="text-[10px] text-center text-muted-foreground/40 mt-2.5 tracking-wide">
+        <p className="text-[10px] text-center text-muted-foreground/60 mt-2.5 tracking-wide">
           Enter para enviar &middot; Shift+Enter para nueva linea
         </p>
       </div>

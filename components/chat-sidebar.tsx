@@ -218,7 +218,7 @@ export function ChatSidebar({ onNewChat }: ChatSidebarProps) {
                         }}
                         key={conv.id}
                         className={cn(
-                          'w-full px-3 py-2.5 rounded-xl text-left transition-all group cursor-pointer',
+                          'w-full px-3 py-3 rounded-xl text-left transition-all group cursor-pointer',
                           currentConversation?.id === conv.id
                             ? 'bg-sidebar-accent'
                             : 'hover:bg-sidebar-accent/50'
@@ -227,25 +227,25 @@ export function ChatSidebar({ onNewChat }: ChatSidebarProps) {
                         {(() => {
                           const posterUrl = getPosterUrl(conv.serie.poster_path, 'w200')
                           return (
-                            <div className="flex items-center gap-2.5">
-                              <div className="relative w-7 h-7 rounded-lg bg-muted overflow-hidden flex items-center justify-center flex-shrink-0">
+                            <div className="flex items-center gap-3">
+                              <div className="relative w-10 h-10 rounded-xl bg-muted overflow-hidden flex items-center justify-center flex-shrink-0">
                                 {posterUrl ? (
                                   <Image
                                     src={posterUrl}
                                     alt={`Poster de ${conv.serie.titulo}`}
                                     fill
-                                    sizes="28px"
+                                    sizes="40px"
                                     className="object-cover"
                                   />
                                 ) : (
-                                  <Tv className="w-3 h-3 text-muted-foreground" />
+                                  <Tv className="w-4 h-4 text-muted-foreground" />
                                 )}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <p className="text-xs font-medium text-foreground truncate">
+                                <p className="text-sm font-medium text-foreground truncate">
                                   {conv.serie.titulo}
                                 </p>
-                                <p className="text-[10px] text-muted-foreground mt-0.5">
+                                <p className="text-xs text-muted-foreground mt-0.5">
                                   {formatDate(conv.created_at)}
                                 </p>
                               </div>
@@ -254,7 +254,7 @@ export function ChatSidebar({ onNewChat }: ChatSidebarProps) {
                                 variant="ghost"
                                 size="icon"
                                 onClick={(event) => handleDeleteConversation(event, conv.id)}
-                                className="h-6 w-6 rounded-lg text-muted-foreground/40 hover:text-destructive hover:bg-destructive/5 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                                className="h-6 w-6 rounded-lg text-muted-foreground/60 hover:text-destructive hover:bg-destructive/5 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
                               >
                                 <Trash2 className="w-3 h-3" />
                               </Button>

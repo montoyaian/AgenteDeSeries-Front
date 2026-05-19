@@ -53,8 +53,8 @@ export function AuthForm() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-background relative overflow-hidden">
       {/* Subtle ambient glow */}
-      <div className="fixed top-[-40%] left-[-20%] w-[60%] h-[60%] rounded-full bg-accent/[0.02] blur-[120px] pointer-events-none" />
-      <div className="fixed bottom-[-30%] right-[-10%] w-[50%] h-[50%] rounded-full bg-accent/[0.015] blur-[100px] pointer-events-none" />
+      <div className="fixed top-[-40%] left-[-20%] w-[60%] h-[60%] rounded-full bg-accent/[0.03] blur-[120px] pointer-events-none" />
+      <div className="fixed bottom-[-30%] right-[-10%] w-[50%] h-[50%] rounded-full bg-accent/[0.025] blur-[100px] pointer-events-none" />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -106,7 +106,7 @@ export function AuthForm() {
                 placeholder="tu@correo.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="pl-11 h-12 bg-secondary border-border rounded-2xl focus:ring-1 focus:ring-accent/30 focus:border-accent/30 transition-all text-foreground placeholder:text-muted-foreground/50"
+                className="pl-11 h-12 bg-secondary border-border rounded-2xl focus:ring-1 focus:ring-accent/30 focus:border-accent/30 transition-all text-foreground placeholder:text-muted-foreground/60"
                 required
               />
             </div>
@@ -124,7 +124,7 @@ export function AuthForm() {
                 placeholder="Tu password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="pl-11 pr-11 h-12 bg-secondary border-border rounded-2xl focus:ring-1 focus:ring-accent/30 focus:border-accent/30 transition-all text-foreground placeholder:text-muted-foreground/50"
+                className="pl-11 pr-11 h-12 bg-secondary border-border rounded-2xl focus:ring-1 focus:ring-accent/30 focus:border-accent/30 transition-all text-foreground placeholder:text-muted-foreground/60"
                 required
                 minLength={6}
               />

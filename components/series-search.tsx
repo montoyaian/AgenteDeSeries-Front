@@ -119,7 +119,7 @@ export function SeriesSearch({ onSeriesSelected, onClose }: SeriesSearchProps) {
               placeholder="Buscar series..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="h-10 pl-10 pr-20 bg-secondary border-border rounded-xl focus:ring-1 focus:ring-accent/30 focus:border-accent/30 text-sm text-foreground placeholder:text-muted-foreground/50"
+              className="h-10 pl-10 pr-20 bg-secondary border-border rounded-xl focus:ring-1 focus:ring-accent/30 focus:border-accent/30 text-sm text-foreground placeholder:text-muted-foreground/60"
               autoFocus
             />
             <Button
@@ -164,7 +164,7 @@ export function SeriesSearch({ onSeriesSelected, onClose }: SeriesSearchProps) {
                   >
                     <div className="flex gap-3">
                       {/* Poster */}
-                      <div className="relative w-12 h-[72px] rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                      <div className="relative w-16 h-24 rounded-xl overflow-hidden bg-muted flex-shrink-0">
                         {series.poster_path ? (
                           <Image
                             src={`https://image.tmdb.org/t/p/w200${series.poster_path}`}
